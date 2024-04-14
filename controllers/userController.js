@@ -1,34 +1,30 @@
-const fs = require('fs');
-
-const userList = JSON.parse(
-  fs.readFileSync(`${__dirname}/../dev-data/data/users.json`)
-);
-
-exports.getAllUser = (req, res) => {
-  res.status(200).json({
-    createdAt: req.requestTime,
-    status: 'Success',
-    request: userList.length,
-    data: userList,
+exports.getAllUsers = (req, res) => {
+  res.status(500).json({
+    status: 'error',
+    message: 'This route is not yet defined!'
   });
 };
-
-exports.getSingleUser = (req, res) => {
-  const id = req.params.id;
-
-  // if (id > userList.length) {
-  //   return res.status(404).json({
-  //     status: 'false',
-  //     message: 'Tour list not found',
-  //   });
-  // }
-
-  const user = userList.find((map) => map._id === id);
-  res.status(200).json({
-    status: 'Success',
-    message: 'User list Success',
-    data: user,
+exports.getUser = (req, res) => {
+  res.status(500).json({
+    status: 'error',
+    message: 'This route is not yet defined!'
   });
-
-  // console.log(req.params);
+};
+exports.createUser = (req, res) => {
+  res.status(500).json({
+    status: 'error',
+    message: 'This route is not yet defined!'
+  });
+};
+exports.updateUser = (req, res) => {
+  res.status(500).json({
+    status: 'error',
+    message: 'This route is not yet defined!'
+  });
+};
+exports.deleteUser = (req, res) => {
+  res.status(500).json({
+    status: 'error',
+    message: 'This route is not yet defined!'
+  });
 };
