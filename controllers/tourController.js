@@ -1,21 +1,21 @@
-const fs = require('fs');
+// const fs = require('fs');
 
 const Tour = require('./../models/tour_model');
 
-const tourList = JSON.parse(
-  fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`)
-);
+// const tourList = JSON.parse(
+//   fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`)
+// );
 
-exports.checkBody = (req, res, next) => {
-  if (!req.body.name || !req.body.price) {
-    return res.status(400).json({
-      status: 'Success',
-      statusCode: 400,
-      message: 'Name and price must be added'
-    });
-  }
-  next();
-};
+// exports.checkBody = (req, res, next) => {
+//   if (!req.body.name || !req.body.price) {
+//     return res.status(400).json({
+//       status: 'Success',
+//       statusCode: 400,
+//       message: 'Name and price must be added'
+//     });
+//   }
+//   next();
+// };
 
 exports.getAllTour = async (req, res) => {
   try {
@@ -66,6 +66,39 @@ exports.createTour = async (req, res) => {
     });
   } catch (err) {
     res.status(400).json({
+      message: err.message,
+      data: err
+    });
+  }
+};
+
+exports.updateTour = async (req, res) => {
+  try {
+    const updatedTour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true
+    });
+    res.status(200).json({
+      message: 'Success',
+      data: updatedTour
+    });
+  } catch (err) {
+    res.status(400).json({
+      message: err.message,
+      data: err
+    });
+  }
+};
+
+exports.deleteTour = async (req, res) => {
+  try {
+    const deleteTour = await Tour.findByIdAndDelete(req.params.id, req.body);
+    res.status(200).json({
+      message: 'Success',
+      data: deleteTour
+    });
+  } catch (err) {
+    res.status(404).json({
       message: err.message,
       data: err
     });

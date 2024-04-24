@@ -15,8 +15,12 @@ const tourController = require('./../controllers/tourController');
 router
   .route('/')
   .get(tourController.getAllTour)
-  .post(tourController.checkBody, tourController.createTour);
+  .post(tourController.createTour);
 
-router.route('/:id').get(tourController.getSingleTour);
+router
+  .route('/:id')
+  .get(tourController.getSingleTour)
+  .patch(tourController.updateTour)
+  .delete(tourController.deleteTour);
 
 module.exports = router;
