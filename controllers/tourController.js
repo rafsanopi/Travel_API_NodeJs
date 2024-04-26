@@ -1,5 +1,6 @@
 // const fs = require('fs');
 
+const { json } = require('express');
 const Tour = require('./../models/tour_model');
 
 // const tourList = JSON.parse(
@@ -19,7 +20,24 @@ const Tour = require('./../models/tour_model');
 
 exports.getAllTour = async (req, res) => {
   try {
-    const allTours = await Tour.find();
+    ///============== Qureing and Excluding some fields ==================
+    const queryObj = { ...req.query };
+    const excludedFields = ['sort', 'page', 'limit', 'fields'];
+    excludedFields.forEach(el => delete queryObj[el]);
+
+    ///============== More Query ==================
+
+    let queryString = JSON.stringify(queryObj);
+    queryString = queryString.replace(
+      /\b(gte|gt|lte|lt)\b/g,
+      match => `$${match}`
+    );
+
+    console.log(JSON.parse(queryString));
+
+    const query = Tour.find(JSON.parse(queryString));
+
+    const allTours = await query;
     res.status(200).json({
       createdAt: req.requestTime,
       status: 'Success',
