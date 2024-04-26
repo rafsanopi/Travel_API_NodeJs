@@ -1,6 +1,5 @@
 // const fs = require('fs');
 
-const { json } = require('express');
 const Tour = require('./../models/tour_model');
 
 // const tourList = JSON.parse(
@@ -40,6 +39,15 @@ exports.getAllTour = async (req, res) => {
     if (req.query.sort) {
       query = query.sort(req.query.sort.split(',').join(' '));
     }
+
+    ///================ Pagination =================
+
+    const page = req.query.page * 1 || 1;
+    const limit = req.query.limit * 1 || 100;
+
+    const skip = (page - 1) * limit;
+
+    query = query.skip(skip).limit(limit);
 
     const allTours = await query;
     res.status(200).json({
