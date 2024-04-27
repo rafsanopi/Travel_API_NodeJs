@@ -17,6 +17,14 @@ const Tour = require('./../models/tour_model');
 //   next();
 // };
 
+exports.aliesTop = async (req, res, next) => {
+  req.query.limit = '5';
+  req.query.sort = 'price,-ratingsAverage';
+  req.query.fields = 'name,price,ratingsAverage, duration';
+
+  next();
+};
+
 exports.getAllTour = async (req, res) => {
   try {
     ///============== Qureing and Excluding some fields ==================
@@ -38,6 +46,13 @@ exports.getAllTour = async (req, res) => {
 
     if (req.query.sort) {
       query = query.sort(req.query.sort.split(',').join(' '));
+    }
+
+    ///================ Fields ===================
+
+    if (req.query.fields) {
+      const fields = req.query.fields.split(',').join(' ');
+      query = query.select(fields);
     }
 
     ///================ Pagination =================

@@ -12,6 +12,8 @@ const tourController = require('./../controllers/tourController');
 //   next();
 // });
 
+router.route('/top-5').get(tourController.aliesTop, tourController.getAllTour);
+
 router
   .route('/')
   .get(tourController.getAllTour)
