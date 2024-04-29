@@ -19,14 +19,6 @@ const APIFeature = require('./../utils/api_features');
 //   next();
 // };
 
-exports.aliesTop = async (req, res, next) => {
-  req.query.limit = '5';
-  req.query.sort = 'price,-ratingsAverage';
-  req.query.fields = 'name,price,ratingsAverage, duration';
-
-  next();
-};
-
 exports.getAllTour = async (req, res) => {
   try {
     ///======================= Exicute Query ==========================
@@ -119,6 +111,49 @@ exports.deleteTour = async (req, res) => {
     res.status(404).json({
       message: err.message,
       data: err
+    });
+  }
+};
+
+exports.aliesTop = async (req, res, next) => {
+  req.query.limit = '5';
+  req.query.sort = 'price,-ratingsAverage';
+  req.query.fields = 'name,price,ratingsAverage, duration';
+
+  next();
+};
+
+exports.tourState = async (req, res) => {
+  try {
+    const state = await Tour.aggregate([
+      {
+        $match: { ratingsAverage: { $gte: 4.5 } }
+      },
+      {
+        $group: {
+          _id: { $toUpper: '$difficulty' },
+          numTour: { $sum: 1 },
+          numRatings: { $sum: '$ratingsQuantity' },
+          avgRatings: { $avg: '$ratingsAverage' },
+          avgPrice: { $avg: '$price' },
+          maxPrice: { $max: '$price' },
+          min: { $min: '$price' }
+        }
+      }
+    ]);
+
+    res.status(200).json({
+      createdAt: req.requestTime,
+      status: 'Success',
+      message: 'aggregate pipeline',
+
+      data: state
+    });
+  } catch (err) {
+    res.status(404).json({
+      createdAt: req.requestTime,
+      status: 'Error',
+      message: err.message
     });
   }
 };

@@ -14,6 +14,8 @@ const tourController = require('./../controllers/tourController');
 
 router.route('/top-5').get(tourController.aliesTop, tourController.getAllTour);
 
+router.route('/tour-state').get(tourController.tourState);
+
 router
   .route('/')
   .get(tourController.getAllTour)
