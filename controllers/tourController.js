@@ -2,6 +2,8 @@
 
 const Tour = require('./../models/tour_model');
 
+const APIFeature = require('./../utils/api_features');
+
 // const tourList = JSON.parse(
 //   fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`)
 // );
@@ -27,44 +29,15 @@ exports.aliesTop = async (req, res, next) => {
 
 exports.getAllTour = async (req, res) => {
   try {
-    ///============== Qureing and Excluding some fields ==================
-    const queryObj = { ...req.query };
-    const excludedFields = ['sort', 'page', 'limit', 'fields'];
-    excludedFields.forEach(el => delete queryObj[el]);
+    ///======================= Exicute Query ==========================
 
-    ///============== More Query ==================
+    const features = new APIFeature(Tour.find(), req.query)
+      .filter()
+      .sort()
+      .fields()
+      .pagination();
 
-    let queryString = JSON.stringify(queryObj);
-    queryString = queryString.replace(
-      /\b(gte|gt|lte|lt)\b/g,
-      match => `$${match}`
-    );
-
-    let query = Tour.find(JSON.parse(queryString));
-
-    ///================ Sorting ===================
-
-    if (req.query.sort) {
-      query = query.sort(req.query.sort.split(',').join(' '));
-    }
-
-    ///================ Fields ===================
-
-    if (req.query.fields) {
-      const fields = req.query.fields.split(',').join(' ');
-      query = query.select(fields);
-    }
-
-    ///================ Pagination =================
-
-    const page = req.query.page * 1 || 1;
-    const limit = req.query.limit * 1 || 100;
-
-    const skip = (page - 1) * limit;
-
-    query = query.skip(skip).limit(limit);
-
-    const allTours = await query;
+    const allTours = await features.query;
     res.status(200).json({
       createdAt: req.requestTime,
       status: 'Success',
@@ -75,9 +48,9 @@ exports.getAllTour = async (req, res) => {
   } catch (err) {
     res.status(404).json({
       createdAt: req.requestTime,
-      status: 'Success',
+      status: 'Error',
       message: err.message,
-      data: req
+      data: null
     });
   }
 };
